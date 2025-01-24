@@ -6,7 +6,10 @@ from .unified import UnifiedLogger
 from .config import LoggerConfig
 from .types import LoggerType
 
-def setup_loggers(types: set[LoggerType]) -> UnifiedLogger:
+def setup_loggers(types: set[LoggerType], new_config: LoggerConfig) -> UnifiedLogger:
+    """
+    Initialize loggers based on the provided types.
+    """
     # Initialize with specific loggers
     valid_types = {
         "local": LoggerType.LOCAL,
@@ -15,8 +18,15 @@ def setup_loggers(types: set[LoggerType]) -> UnifiedLogger:
     }
     enabled_loggers = {valid_types[t] for t in types if t in valid_types}
     
+    print(new_config)
+    
+    for k, v in new_config.__dict__.items():
+        print(f"{k}: {v}")
+        
+    new_config.enabled_loggers = enabled_loggers
+    
     config = LoggerConfig(
-        enabled_loggers=enabled_loggers,
+        **new_config.as_dict()
     )
 
     # Initialize unified logger
