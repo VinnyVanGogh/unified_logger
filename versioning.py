@@ -79,7 +79,6 @@ class VersionManager:
 @click.group()
 def cli():
     """Version management for Python projects."""
-    pass
 
 @cli.command()
 def check():
