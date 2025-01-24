@@ -48,7 +48,7 @@ class UnifiedLogger:
                 self.loggers["asio"] = AsioLogger()
             if LoggerType.DISCORD in self.config.enabled_loggers:
                 self.loggers["discord"] = DiscordLogger(
-                    self.config.webhook_url,
+                    self.config.discord_webhook_url,
                     self.config.logger_name
                 )
         except Exception as e:

@@ -26,15 +26,15 @@ class DiscordLogger(BaseLogger):
         logging.CRITICAL: 0x992D22  # Dark Red
     }
     
-    def __init__(self, webhook_url: str, logger_name: str = "Application Logger"):
+    def __init__(self, discord_webhook_url: str, logger_name: str = "Application Logger"):
         """
         Initialize Discord logger with webhook configuration.
         
         Args:
-            webhook_url (str): Discord webhook URL
+            discord_webhook_url (str): Discord webhook URL
             logger_name (str): Logger name for webhook messages
         """
-        self.webhook_url = webhook_url
+        self.discord_webhook_url = discord_webhook_url
         self.username = logger_name
         self._session = None
         
@@ -91,7 +91,7 @@ class DiscordLogger(BaseLogger):
             }
 
             async with self._session.post(
-                self.webhook_url,
+                self.discord_webhook_url,
                 json=payload,
                 timeout=aiohttp.ClientTimeout(total=5)
             ) as response:

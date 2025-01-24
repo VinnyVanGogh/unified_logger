@@ -16,7 +16,8 @@ class LoggerConfig:
     """
     # Logger enablement flags
     enabled_loggers: Set[LoggerType] = field(
-        default_factory=lambda: {LoggerType.LOCAL}
+        default_factory=lambda: {LoggerType.LOCAL},
+        metadata={"converter": lambda x: set(x) if isinstance(x, (list, tuple, set)) else {x}}
     )
     
     # Core settings
@@ -29,7 +30,7 @@ class LoggerConfig:
     log_file_name: str = "app.log"
     
     # External service settings
-    webhook_url: Optional[str] = None
+    discord_webhook_url: Optional[str] = None
     asio_config: Optional[dict] = None
     
     # Message processing
@@ -37,7 +38,26 @@ class LoggerConfig:
     enable_debug_mode: bool = False
 
     def __post_init__(self):
-        """Validate configuration after initialization."""
+        """Ensure enabled_loggers is a set of valid LoggerType values."""
+        if not isinstance(self.enabled_loggers, set):
+            try:
+                # Handle string input (e.g., "local,discord")
+                if isinstance(self.enabled_loggers, str):
+                    logger_names = self.enabled_loggers.split(',')
+                    self.enabled_loggers = {
+                        LoggerType[name.strip().upper()]
+                        for name in logger_names
+                    }
+                else:
+                    self.enabled_loggers = set(self.enabled_loggers)
+            except (KeyError, ValueError) as e:
+                raise ValueError(f"Invalid logger types: {e}")
+
+        # Validate all elements are LoggerType
+        for logger in self.enabled_loggers:
+            if not isinstance(logger, LoggerType):
+                raise ValueError(f"Invalid logger type: {logger}")
+
         self._validate_config()
         
     def _validate_config(self) -> None:
@@ -72,7 +92,7 @@ class LoggerConfig:
             raise ValueError("max_message_length must be positive")
             
         # Validate Discord config
-        if LoggerType.DISCORD in self.enabled_loggers and not self.webhook_url:
+        if LoggerType.DISCORD in self.enabled_loggers and not self.discord_webhook_url:
             raise ValueError("Discord logging enabled but no webhook URL provided")
           
         if LoggerType.LOCAL in self.enabled_loggers and not self.log_dir:
@@ -121,6 +141,6 @@ class LoggerConfig:
             f"log_level={self.log_level}, "
             f"log_dir={self.log_dir}, "
             f"log_file_name={self.log_file_name}, "
-            f"webhook_url={self.webhook_url}, "
+            f"discord_webhook_url={self.discord_webhook_url}, "
             f"level={logging.getLevelName(self.log_level)})"
         )
