@@ -29,7 +29,7 @@ class LoggerConfig:
     log_file_name: str = "app.log"
     
     # External service settings
-    webhook_url: Optional[str] = "https://discord.com/api/webhooks/1332028030289186908/K1y0oexKLumsr6yGsnph4ww3PzPMoo8abpvyo8NPNziMWzI68P7_lmvbiKer2gkSSc-1"
+    webhook_url: Optional[str] = None
     asio_config: Optional[dict] = None
     
     # Message processing
