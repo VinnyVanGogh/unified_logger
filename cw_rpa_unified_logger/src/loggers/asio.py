@@ -5,7 +5,7 @@
 import logging
 from typing import Any
 from cw_rpa import Logger as AsioLoggerBase
-from src.loggers.base import BaseLogger
+from cw_rpa_unified_logger.src.loggers.base import BaseLogger
 
 class AsioLogger(BaseLogger):
     """

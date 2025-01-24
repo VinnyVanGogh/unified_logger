@@ -6,7 +6,7 @@ from dataclasses import dataclass, field
 from typing import Optional, Set
 import logging
 from pathlib import Path
-from src.loggers.types import LoggerType
+from cw_rpa_unified_logger.src.loggers.types import LoggerType
 
 @dataclass
 class LoggerConfig:

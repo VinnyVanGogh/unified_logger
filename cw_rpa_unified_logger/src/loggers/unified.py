@@ -8,13 +8,13 @@ import functools
 from typing import Any, Generator, Callable
 from collections.abc import Callable
 
-from src.loggers.base import BaseLogger
-from src.loggers.local import LocalLogger
-from src.loggers.asio import AsioLogger
-from src.loggers.discord import DiscordLogger
-from src.loggers.message_formatter import MessageFormatter
-from src.loggers.config import LoggerConfig
-from src.loggers.types import LoggerType
+from cw_rpa_unified_logger.src.loggers.base import BaseLogger
+from cw_rpa_unified_logger.src.loggers.local import LocalLogger
+from cw_rpa_unified_logger.src.loggers.asio import AsioLogger
+from cw_rpa_unified_logger.src.loggers.discord import DiscordLogger
+from cw_rpa_unified_logger.src.loggers.message_formatter import MessageFormatter
+from cw_rpa_unified_logger.src.loggers.config import LoggerConfig
+from cw_rpa_unified_logger.src.loggers.types import LoggerType
 
 class UnifiedLogger:
     """

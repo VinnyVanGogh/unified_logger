@@ -10,9 +10,9 @@ from datetime import datetime, UTC
 from pathlib import Path
 from typing import Any
 
-from src.loggers.base import BaseLogger
-from src.loggers.config import LoggerConfig
-from src.loggers.types import LoggerType
+from cw_rpa_unified_logger.src.loggers.base import BaseLogger
+from cw_rpa_unified_logger.src.loggers.config import LoggerConfig
+from cw_rpa_unified_logger.src.loggers.types import LoggerType
 
 class LocalLogger(BaseLogger):
     """

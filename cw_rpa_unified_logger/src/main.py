@@ -1,5 +1,5 @@
 
-from src import setup_loggers
+from cw_rpa_unified_logger.src import setup_loggers
 import asyncio
     
 async def cleanup(logger):
