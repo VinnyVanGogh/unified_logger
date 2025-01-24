@@ -35,7 +35,8 @@ class AsyncLogger:
                 
 async def get_logger(webhook_url: str, loggers: set[str] = None):
     """Factory function to get configured logger instance."""
-    logger_manager = AsyncLogger(loggers or {"local", "discord", "asio"})
+    loggers = loggers or {"local", "discord", "asio"}
+    logger_manager = AsyncLogger(loggers)
     
     try:
         logger = await logger_manager.initialize(webhook_url)
