@@ -133,6 +133,10 @@ class LoggerConfig:
             for key, value in self.__dict__.items()
         }
         
+    def current_loggers(self) -> set[str]:
+        """Get currently enabled loggers as a set of strings."""
+        return {logger.name for logger in self.enabled_loggers}
+        
     def __str__(self) -> str:
         """String representation of configuration."""
         return (
