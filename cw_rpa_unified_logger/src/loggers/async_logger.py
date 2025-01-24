@@ -2,6 +2,7 @@
 from .config import LoggerConfig
 from .setup_loggers import setup_loggers
 from .unified import UnifiedLogger
+from .types import LoggerType
 from typing import Optional, Set, Tuple
 import logging
 
@@ -62,7 +63,7 @@ async def get_logger(
         enabled_loggers = loggers or {"local", "discord", "asio"}
         
         # Validate logger types
-        valid_types = {"local", "discord", "asio"}
+        valid_types = LoggerType.get_valid_types()
         invalid_loggers = enabled_loggers - valid_types
         if invalid_loggers:
             raise ValueError(f"Invalid logger types: {invalid_loggers}")
@@ -71,6 +72,7 @@ async def get_logger(
         logger_manager = AsyncLogger(enabled_loggers)
         logger = await logger_manager.initialize(webhook_url)
         
+        logging.debug(f"Initialized loggers: {logger.config.current_loggers()}")
         return logger, logger_manager
         
     except Exception as e:

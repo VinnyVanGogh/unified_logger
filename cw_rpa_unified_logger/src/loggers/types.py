@@ -15,6 +15,12 @@ class LoggerType(Enum):
     def all_types(cls) -> Set['LoggerType']:
         """Return set of all available logger types."""
         return {cls.LOCAL, cls.ASIO, cls.DISCORD}
+    
+    @classmethod
+    def get_valid_types(cls) -> Set[str]:
+        """Return set of valid logger type names."""
+        return {t.value for t in cls}
+
         
     def __str__(self) -> str:
         """String representation for configuration display."""
