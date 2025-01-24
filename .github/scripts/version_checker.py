@@ -1,8 +1,6 @@
 import os
-import sys
 import configparser
 import toml
-import requests
 from pathlib import Path
 
 PACKAGE_NAME = "my_package"
