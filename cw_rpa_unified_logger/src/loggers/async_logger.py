@@ -1,6 +1,8 @@
 #!/usr/bin/env python
 from .config import LoggerConfig
 from .setup_loggers import setup_loggers
+from .unified import UnifiedLogger
+from typing import Optional, Set, Tuple
 import logging
 
 class AsyncLogger:
@@ -33,14 +35,44 @@ class AsyncLogger:
             if discord_logger:
                 await discord_logger.cleanup()
                 
-async def get_logger(webhook_url: str, loggers: set[str] = None):
-    """Factory function to get configured logger instance."""
-    loggers = loggers or {"local", "discord", "asio"}
-    logger_manager = AsyncLogger(loggers)
+async def get_logger(
+    webhook_url: str, 
+    loggers: Optional[Set[str]] = None
+) -> Tuple[Optional[UnifiedLogger], Optional[AsyncLogger]]:
+    """
+    Factory function to get configured logger instance.
     
+    Args:
+        webhook_url: Discord webhook URL for notifications
+        loggers: Set of logger types to enable. Defaults to all loggers.
+        
+    Returns:
+        Tuple containing:
+        - UnifiedLogger instance or None if initialization fails
+        - AsyncLogger manager instance or None if initialization fails
+        
+    Example:
+        >>> logger, manager = await get_logger(
+        ...     webhook_url="https://discord.com/api/webhooks/...",
+        ...     loggers={"local", "discord"}
+        ... )
+    """
     try:
+        # Default to all available loggers if none specified
+        enabled_loggers = loggers or {"local", "discord", "asio"}
+        
+        # Validate logger types
+        valid_types = {"local", "discord", "asio"}
+        invalid_loggers = enabled_loggers - valid_types
+        if invalid_loggers:
+            raise ValueError(f"Invalid logger types: {invalid_loggers}")
+        
+        # Initialize logger manager
+        logger_manager = AsyncLogger(enabled_loggers)
         logger = await logger_manager.initialize(webhook_url)
+        
         return logger, logger_manager
+        
     except Exception as e:
-        logging.error(f"Logger initialization failed: {e}")
+        logging.error(f"Logger initialization failed: {str(e)}")
         return None, None
