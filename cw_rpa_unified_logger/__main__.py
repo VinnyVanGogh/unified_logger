@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-from cw_rpa_unified_logger.src.main import main
 from cw_rpa_unified_logger.src.loggers import get_logger
 import asyncio
 
