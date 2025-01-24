@@ -4,7 +4,6 @@
 
 import logging
 import json
-from re import L
 import colorlog
 from datetime import datetime, UTC
 from pathlib import Path
