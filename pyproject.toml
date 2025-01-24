@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "cw-rpa-unified-logger"
-version = "0.1.0"
+version = "0.1.1a1"
 description = "Unified logging system with Discord and Asio integrations"
 authors = ["VinnyVanGogh <133192356+VinnyVanGogh@users.noreply.github.com>"]
 license = "MIT"
