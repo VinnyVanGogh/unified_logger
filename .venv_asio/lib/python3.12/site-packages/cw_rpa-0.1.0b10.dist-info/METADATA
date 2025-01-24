@@ -1,0 +1,8 @@
+Metadata-Version: 2.1
+Name: cw-rpa
+Version: 0.1.0b10
+Summary: A custom cw_rpa library with common utilities and cloud functionalities.
+Author: ConnectWise
+License-File: LICENSE
+Requires-Dist: requests
+

@@ -1,0 +1,16 @@
+[build-system]
+requires = ["setuptools>=45", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "unified-logger"
+version = "0.1.0"
+description = "Unified logging system with Discord integration"
+requires-python = ">=3.9"
+dependencies = [
+    "colorlog>=6.7.0",
+    "requests>=2.28.0"
+]
+
+[project.optional-dependencies]
+asio = ["cw-rpa"]
