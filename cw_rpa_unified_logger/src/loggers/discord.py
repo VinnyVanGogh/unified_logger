@@ -9,7 +9,6 @@ import time
 from datetime import datetime, UTC
 from typing import Any
 import aiohttp
-import signal
 from src.loggers.base import BaseLogger
 
 class DiscordLogger(BaseLogger):

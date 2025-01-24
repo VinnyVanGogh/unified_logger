@@ -6,7 +6,6 @@ import logging
 import colorlog
 from pathlib import Path
 from datetime import datetime, UTC
-from typing import Any
 
 class LogHandlerFactory:
     """
