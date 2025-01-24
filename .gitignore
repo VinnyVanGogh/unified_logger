@@ -2,3 +2,4 @@
 videos/
 *.log
 __pycache__
+.venv_asio
