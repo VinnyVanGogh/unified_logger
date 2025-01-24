@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 from cw_rpa_unified_logger.src.main import main
 import asyncio
 

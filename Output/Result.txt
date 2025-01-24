@@ -1,10 +1,2 @@
-2025-01-24 12:23:19,502 - INFO - enabled_loggers: {<LoggerType.ASIO: 2>, <LoggerType.LOCAL: 1>, <LoggerType.DISCORD: 3>}
-2025-01-24 12:23:19,502 - INFO - logger_name: unified_logger
-2025-01-24 12:23:19,502 - INFO - log_level: 20
-2025-01-24 12:23:19,502 - INFO - max_message_length: 2000
-2025-01-24 12:23:19,502 - INFO - log_dir: /Users/vincevasile/Documents/dev/python/active_projects/asio_logging/cw_rpa_unified_logger/src/loggers/logs
-2025-01-24 12:23:19,502 - INFO - log_file_name: app.log
-2025-01-24 12:23:19,502 - INFO - discord_webhook_url: https://discord.com/api/webhooks/123456789012345678/abcdefghijklmnopqrstuvwxyz
-2025-01-24 12:23:19,502 - INFO - asio_config: None
-2025-01-24 12:23:19,502 - INFO - filter_patterns: ['error', 'warning']
-2025-01-24 12:23:19,502 - INFO - enable_debug_mode: False
+2025-01-24 12:38:05,917 - INFO - System initialized
+2025-01-24 12:38:05,917 - WARNING - Warning message

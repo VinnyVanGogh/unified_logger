@@ -11,7 +11,7 @@ Features:
 - Async-friendly cleanup utilities
 """
 
-from .src.loggers import UnifiedLogger, LoggerConfig, LoggerType, setup_loggers
+from .src.loggers import UnifiedLogger, LoggerConfig, LoggerType, setup_loggers, AsyncLogger, get_logger
 from .src.main import cleanup_loggers
 
 
@@ -20,5 +20,7 @@ __all__ = [
     "LoggerConfig",
     "LoggerType",
     "setup_loggers",
-    "cleanup_loggers"
+    "cleanup_loggers",
+    "AsyncLogger",
+    "get_logger"
 ]
