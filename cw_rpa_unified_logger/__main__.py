@@ -5,8 +5,8 @@ import asyncio
 
 async def test():
   logger, manager = await get_logger(
-      webhook_url="https://discord.com/api/webhooks/1332028030289186908/K1y0oexKLumsr6yGsnph4ww3PzPMoo8abpvyo8NPNziMWzI68P7_lmvbiKer2gkSSc-1",
-      loggers={"local", "discord"}  # Specify only needed loggers
+      webhook_url="https://discord.com/api/webhooks/123456789012345678/abcdefghijklmnopqrstuvwxyz",
+      logger_types={"local", "discord"}  # Specify only needed loggers
   )
   if logger:
       try:
