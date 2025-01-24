@@ -1,11 +1,11 @@
 [tool.poetry]
-name = "unified-logger"
+name = "cw-rpa-unified-logger"
 version = "0.1.0"
 description = "Unified logging system with Discord and Asio integrations"
 authors = ["VinnyVanGogh <133192356+VinnyVanGogh@users.noreply.github.com>"]
 license = "MIT"
 readme = "README.md"
-packages = [{include = "unified_logger"}]
+packages = [{include = "cw_rpa_unified_logger"}]
 
 [tool.poetry.dependencies]
 python = "^3.11"
