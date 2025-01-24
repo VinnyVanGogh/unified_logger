@@ -20,32 +20,26 @@ class BaseLogger(ABC):
             level (int): The logging level (DEBUG, INFO, etc.)
             message (str): The message to log
         """
-        pass
     
     @abstractmethod
     def debug(self, message: str) -> None:
         """Log a debug message."""
-        pass
 
     @abstractmethod
     def info(self, message: str) -> None:
         """Log an info message."""
-        pass
 
     @abstractmethod
     def warning(self, message: str) -> None:
         """Log a warning message."""
-        pass
 
     @abstractmethod
     def error(self, message: str) -> None:
         """Log an error message."""
-        pass
 
     @abstractmethod
     def critical(self, message: str) -> None:
         """Log a critical message."""
-        pass
         
     @abstractmethod
     def exception(self, e: Exception, message: str) -> None:
@@ -56,7 +50,6 @@ class BaseLogger(ABC):
             e (Exception): The exception that occurred
             message (str): Additional context about the exception
         """
-        pass
         
     @abstractmethod
     def result_data(self, data: dict[str, Any]) -> None:
@@ -66,9 +59,7 @@ class BaseLogger(ABC):
         Args:
             data (dict): The data to log
         """
-        pass
 
     @abstractmethod
     def cleanup(self) -> None:
         """Clean up any resources used by the logger."""
-        pass
