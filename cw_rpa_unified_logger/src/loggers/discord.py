@@ -46,6 +46,7 @@ class DiscordLogger(BaseLogger):
         self.max_retries = 3         # Maximum retry attempts
         self.retry_delay = 1         # Seconds between retries
         self.max_embed_length = 1900 # Discord's limit is 2000, leave margin
+        self._initialize_logging()
         
     async def _ensure_session(self) -> None:
         """Ensure aiohttp session is initialized."""
@@ -136,6 +137,7 @@ class DiscordLogger(BaseLogger):
             self.message_queue.append(embed)
             
             current_time = time.time()
+            logging.debug(f"Message queued. Queue size: {len(self.message_queue)}")
             should_send = (
                 len(self.message_queue) >= self.batch_size or
                 current_time - self.last_batch_time >= self.batch_interval
@@ -206,20 +208,35 @@ class DiscordLogger(BaseLogger):
             logging.error(f"Failed to format result data for Discord: {e}")
 
     async def cleanup(self) -> None:
-        """Clean up Discord logger resources and send remaining messages."""
+        """Clean up Discord logger resources and force send remaining messages."""
         try:
+            print(f"Discord cleanup - Messages in queue: {len(self.message_queue)}")
             if self.message_queue:
+                # Force send remaining messages
                 await self._send_batch()
-            if self._session:
-                if not self._session.closed:
-                    await self._session.close()
+                # Wait a moment to ensure processing
+                await asyncio.sleep(0.5)
+            
+            if self._session and not self._session.closed:
+                await self._session.close()
                 self._session = None
+                
         except Exception as e:
-            logging.error(f"Error during Discord logger cleanup: {e}", exc_info=True)
-
+            logging.error(f"Discord cleanup failed: {e}", exc_info=True)
             
     def cleanup_discord_logger(logger_instance):
         asyncio.run(logger_instance.cleanup())
+        
+    def _initialize_logging(self):
+        """Initialize the logger with a specific format."""
+        self.logger = logging.getLogger('DiscordLogger')
+        self.logger.setLevel(logging.DEBUG)
+        handler = logging.StreamHandler()
+        formatter = logging.Formatter(
+            '%(asctime)s - [%(process)d] - %(levelname)s - %(message)s'
+        )
+        handler.setFormatter(formatter)
+        self.logger.addHandler(handler)
 
 
         

@@ -5,9 +5,10 @@ from .unified import UnifiedLogger
 from .types import LoggerType
 from typing import Optional, Set, Tuple, Union, List
 import logging
+import asyncio
 
 class AsyncLogger:
-    def __init__(self, logger_types: set[str]):
+    def __init__(self, logger_types: set[str], log_level: int = logging.INFO):
         self.logger = None
         self.config = None
         # Convert set/list to comma-separated string
@@ -18,54 +19,59 @@ class AsyncLogger:
             logger_types = ",".join(logger_types)
             
         self.enabled_loggers = LoggerType.from_input(logger_types)
-
-
-    async def initialize(self, webhook_url: str):
-        """
-        Initialize the logger with configuration and proper type handling.
         
-        Args:
-            webhook_url: Discord webhook URL for notifications
-            
-        Returns:
-            UnifiedLogger: Configured logger instance
-        """
+        self.log_level = log_level
+
+        # Store raw input for later use in initialize
+        self.raw_logger_types = self.enabled_loggers
+
+    async def initialize(self, webhook_url: str, log_level: int = logging.INFO) -> Optional[UnifiedLogger]:
+        """Initialize logger with configuration and types."""
         try:
             config = LoggerConfig(
-                enabled_loggers=self.enabled_loggers,
                 discord_webhook_url=webhook_url,
                 max_message_length=2000,
                 filter_patterns=["error", "warning"],
-                log_level=logging.INFO
+                log_level=log_level
             )
             
-            # Pass both config and logger types for proper initialization
+            # Initialize logger with both types and config
             self.logger = setup_loggers(
-                types=self.enabled_loggers,  # Already converted to LoggerType set
+                types=self.raw_logger_types,  # Pass raw types to setup_loggers
                 config=config
             )
-            self.config = self.logger.config
+            self.config = config
             return self.logger
+            
+        except Exception as e:
+            logging.error(f"Logger initialization failed: {e}")
+            return None
             
         except Exception as e:
             logging.error(f"Logger initialization failed: {e}")
             return None
 
     async def cleanup(self):
-        """Cleanup logger resources."""
+        """Ensure proper cleanup and message sending."""
         if self.logger and hasattr(self.logger, 'loggers'):
             discord_logger = self.logger.loggers.get("discord")
             if discord_logger:
+                print("Cleaning up Discord logger...")
+                # Force process any remaining messages
                 await discord_logger.cleanup()
+                # Give time for messages to process
+                await asyncio.sleep(1)
                 
 async def get_logger(
     webhook_url: str, 
+    log_level: int = logging.INFO,
     logger_types: Union[str, Set[str], List[str], None] = None
 ) -> Tuple[Optional[UnifiedLogger], Optional[AsyncLogger]]:
     """Initialize configured logger instance."""
     try:
         print(f"Logger types: {logger_types} with types: {type(logger_types)}")
-        logger_manager = AsyncLogger(logger_types)  # Pass raw input
+        print(f"Log level: {log_level} with type: {type(log_level)}")
+        logger_manager = AsyncLogger(logger_types, log_level)  # Pass raw input
         logger = await logger_manager.initialize(webhook_url)
         
         if logger:
