@@ -8,6 +8,8 @@ import functools
 from typing import Any, Generator, Callable
 from collections.abc import Callable
 
+from cw_rpa import Logger
+
 from cw_rpa_unified_logger.src.loggers.base import BaseLogger
 from cw_rpa_unified_logger.src.loggers.local import LocalLogger
 from cw_rpa_unified_logger.src.loggers.asio import AsioLogger
@@ -175,6 +177,13 @@ class UnifiedLogger:
         """Log structured result data."""
         formatted = self.formatter.format_data(data)
         self._log_to_all(logging.INFO, f"Result Data: {formatted}")
+        if LoggerType.ASIO in self.config.enabled_loggers:
+            AsioLogger().result_data(data)
+            
+    def result_failed_message(self, message: str) -> None:
+        """Log a failed message result."""
+        if LoggerType.ASIO in self.config.enabled_loggers:
+            AsioLogger().result_failed_message(message)
 
     def __enter__(self):
         """Context manager entry."""

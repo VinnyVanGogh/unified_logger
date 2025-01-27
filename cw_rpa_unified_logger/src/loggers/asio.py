@@ -79,6 +79,15 @@ class AsioLogger(BaseLogger):
         except Exception as e:
             logging.error(f"Failed to log result data to Asio: {e}")
             self._connected = False
+            
+    def result_failed_message(self, message: str) -> None:
+        """Log a failed message result."""
+        try:
+            if self._connected:
+                self.logger.result_failed_message(message)
+        except Exception as e:
+            logging.error(f"Failed to log failed message to Asio: {e}")
+            self._connected = False
 
     def cleanup(self) -> None:
         """Clean up Asio logger resources."""
