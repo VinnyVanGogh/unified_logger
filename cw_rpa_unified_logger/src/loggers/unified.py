@@ -7,8 +7,7 @@ from contextlib import contextmanager
 import functools
 from typing import Any, Generator, Callable
 from collections.abc import Callable
-
-from cw_rpa import Logger
+import asyncio
 
 from cw_rpa_unified_logger.src.loggers.base import BaseLogger
 from cw_rpa_unified_logger.src.loggers.local import LocalLogger
@@ -37,8 +36,7 @@ class UnifiedLogger:
             config.filter_patterns
         )
         self.loggers: dict[str, BaseLogger] = {}
-        
-        self._initialize()
+            
         
     async def _initialize(self) -> None:
         """Async initialization for loggers."""

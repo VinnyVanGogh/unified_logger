@@ -1,3 +1,3 @@
-2025-01-27 22:33:32,960 - INFO - Logger initialized successfully
-2025-01-27 22:33:32,960 - WARNING - Warning level alert
-2025-01-27 22:33:32,960 - ERROR - Error level notification
+2025-01-27 23:23:11,769 - INFO - Logger initialized successfully
+2025-01-27 23:23:11,769 - WARNING - Warning level alert
+2025-01-27 23:23:11,769 - ERROR - Error level notification
