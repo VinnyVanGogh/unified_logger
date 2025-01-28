@@ -8,7 +8,6 @@ import functools
 from typing import Any, Generator, Callable
 from collections.abc import Callable
 
-from cw_rpa import Logger
 
 from cw_rpa_unified_logger.src.loggers.base import BaseLogger
 from cw_rpa_unified_logger.src.loggers.local import LocalLogger
