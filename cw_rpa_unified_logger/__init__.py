@@ -13,8 +13,6 @@ Features:
 
 from .src.loggers import UnifiedLogger, LoggerConfig, LoggerType, setup_loggers, AsyncLogger, get_logger
 from .src.main import cleanup_loggers
-import tracemalloc
-tracemalloc.start()
 
 
 
