@@ -38,25 +38,26 @@ class UnifiedLogger:
         )
         self.loggers: dict[str, BaseLogger] = {}
         
-        self._initializes()
+        self._initialize()
         
-    def _initializes(self) -> None:
-        """Initialize configured logging backends."""
+    async def _initialize(self) -> None:
+        """Async initialization for loggers."""
         try:
-            print(f"Initializing loggers: {self.config.enabled_loggers}")
             if LoggerType.LOCAL in self.config.enabled_loggers:
                 self.loggers["local"] = LocalLogger(self.config)
             if LoggerType.ASIO in self.config.enabled_loggers:
                 self.loggers["asio"] = AsioLogger()
             if LoggerType.DISCORD in self.config.enabled_loggers:
-                self.loggers["discord"] = DiscordLogger(
+                discord_logger = DiscordLogger(
                     self.config.discord_webhook_url,
                     self.config.logger_name
                 )
+                await discord_logger.initialize()  # Await async setup
+                self.loggers["discord"] = discord_logger
         except Exception as e:
             logging.error(f"Failed to initialize loggers: {e}")
             
-    def update_config(self, **kwargs) -> None:
+    async def update_config(self, **kwargs) -> None:
         """
         Update logger configuration dynamically.
         
@@ -67,7 +68,7 @@ class UnifiedLogger:
             if hasattr(self.config, key):
                 setattr(self.config, key, value)
                 
-        self._initializes()
+        await self._initialize()
             
     def _log_to_all(self, level: int, message: str) -> None:
         """

@@ -1,10 +1,11 @@
 #!/usr/bin/env python
+# ./cw_rpa_unified_logger/src/loggers/setup_loggers.py
 from .types import LoggerType
 from .config import LoggerConfig
 from .unified import UnifiedLogger
 from typing import Union
 
-def setup_loggers(types: Union[str, set, LoggerType], config: LoggerConfig) -> UnifiedLogger:
+async def setup_loggers(types: Union[str, set, LoggerType], config: LoggerConfig) -> UnifiedLogger:
     """
     Initialize loggers based on the provided types and configuration.
     
@@ -25,5 +26,6 @@ def setup_loggers(types: Union[str, set, LoggerType], config: LoggerConfig) -> U
     # Update config with enabled loggers
     config.enabled_loggers = enabled_loggers
     
-    # Initialize and return logger
-    return UnifiedLogger(config)
+    logger = UnifiedLogger(config)
+    await logger._initialize()
+    return logger

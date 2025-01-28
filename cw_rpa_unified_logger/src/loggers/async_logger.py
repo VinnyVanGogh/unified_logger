@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+# ./cw_rpa_unified_logger/src/loggers/async_logger.py
 from .config import LoggerConfig
 from .setup_loggers import setup_loggers
 from .unified import UnifiedLogger
@@ -35,18 +36,13 @@ class AsyncLogger:
                 log_level=log_level
             )
             
-            # Initialize logger with both types and config
-            self.logger = setup_loggers(
-                types=self.raw_logger_types,  # Pass raw types to setup_loggers
+            # PROPERLY AWAIT THE ASYNC SETUP
+            self.logger = await setup_loggers(
+                types=self.raw_logger_types,
                 config=config
             )
             self.config = config
             return self.logger
-            
-        except Exception as e:
-            logging.error(f"Logger initialization failed: {e}")
-            return None
-            
         except Exception as e:
             logging.error(f"Logger initialization failed: {e}")
             return None
@@ -57,27 +53,32 @@ class AsyncLogger:
             discord_logger = self.logger.loggers.get("discord")
             if discord_logger:
                 print("Cleaning up Discord logger...")
-                # Force process any remaining messages
                 await discord_logger.cleanup()
-                # Give time for messages to process
                 await asyncio.sleep(1)
+
                 
 async def get_logger(
     webhook_url: str, 
     log_level: int = logging.INFO,
     logger_types: Union[str, Set[str], List[str], None] = None
 ) -> Tuple[Optional[UnifiedLogger], Optional[AsyncLogger]]:
-    """Initialize configured logger instance."""
+    """Initialize configured logger instance with async support."""
+    logger_manager = None
     try:
-        print(f"Logger types: {logger_types} with types: {type(logger_types)}")
-        print(f"Log level: {log_level} with type: {type(log_level)}")
-        logger_manager = AsyncLogger(logger_types, log_level)  # Pass raw input
-        logger = await logger_manager.initialize(webhook_url)
+        logger_manager = AsyncLogger(logger_types, log_level)
+        logger = await logger_manager.initialize(webhook_url, log_level)
         
         if logger:
+            # Verify Discord logger initialization
+            if discord_logger := logger.loggers.get("discord"):
+                if hasattr(discord_logger, 'initialize'):
+                    await discord_logger.initialize()
+            
             logging.debug(f"Initialized loggers: {logger.config.current_loggers()}")
             return logger, logger_manager
             
     except Exception as e:
-        logging.error(f"Logger initialization failed: {str(e)}")
+        logging.error(f"Logger initialization failed: {str(e)}", exc_info=True)
+        if logger_manager:
+            await logger_manager.cleanup()
         return None, None
