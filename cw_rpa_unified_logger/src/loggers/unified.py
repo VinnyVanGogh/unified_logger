@@ -54,7 +54,12 @@ class UnifiedLogger:
                 self.loggers["discord"] = discord_logger
         except Exception as e:
             logging.error(f"Failed to initialize loggers: {e}")
-            
+
+    def _format_exception(self, exc_info: tuple) -> str:
+        """Format exception info into a readable string."""
+        import traceback
+        return ''.join(traceback.format_exception(*exc_info))
+    
     async def update_config(self, **kwargs) -> None:
         """
         Update logger configuration dynamically.
@@ -68,23 +73,33 @@ class UnifiedLogger:
                 
         await self._initialize()
             
-    def _log_to_all(self, level: int, message: str) -> None:
+    def _log_to_all(self, level: int, message: str, exc_info: bool | tuple | None = None) -> None:
         """
-        Distribute log message to all active backends.
+        Distribute log message to all active backends with exception handling.
         
         Args:
             level (int): Logging level
             message (str): Message to log
+            exc_info: Exception information (bool, tuple, or None)
         """
         processed = self.formatter.process_message(message)
         if processed is None:
             return
             
+        # Handle exception info
+        if exc_info:
+            if exc_info is True:
+                import sys
+                exc_info = sys.exc_info()
+            if isinstance(exc_info, tuple) and len(exc_info) == 3:
+                processed = f"{processed}\n{self._format_exception(exc_info)}"
+
         for logger in self.loggers.values():
             try:
                 logger.log(level, processed)
             except Exception as e:
                 print(f"Logging failed for {logger.__class__.__name__}: {e}")
+
 
     @contextmanager
     def temp_config(self, **kwargs) -> Generator[None, None, None]:
@@ -146,31 +161,27 @@ class UnifiedLogger:
             except Exception as e:
                 print(f"Cleanup failed for {logger.__class__.__name__}: {e}")
 
-    # Standard logging methods
-    def debug(self, message: str) -> None:
-        """Log debug message."""
-        self._log_to_all(logging.DEBUG, message)
+    # Update logging methods to handle exc_info
+    def debug(self, message: str, exc_info: bool | tuple | None = None) -> None:
+        self._log_to_all(logging.DEBUG, message, exc_info)
 
-    def info(self, message: str) -> None:
-        """Log info message."""
-        self._log_to_all(logging.INFO, message)
+    def info(self, message: str, exc_info: bool | tuple | None = None) -> None:
+        self._log_to_all(logging.INFO, message, exc_info)
 
-    def warning(self, message: str) -> None:
-        """Log warning message."""
-        self._log_to_all(logging.WARNING, message)
+    def warning(self, message: str, exc_info: bool | tuple | None = None) -> None:
+        self._log_to_all(logging.WARNING, message, exc_info)
 
-    def error(self, message: str) -> None:
-        """Log error message."""
-        self._log_to_all(logging.ERROR, message)
+    def error(self, message: str, exc_info: bool | tuple | None = None) -> None:
+        self._log_to_all(logging.ERROR, message, exc_info)
 
-    def critical(self, message: str) -> None:
-        """Log critical message."""
-        self._log_to_all(logging.CRITICAL, message)
+    def critical(self, message: str, exc_info: bool | tuple | None = None) -> None:
+        self._log_to_all(logging.CRITICAL, message, exc_info)
 
     def exception(self, e: Exception, message: str = "") -> None:
-        """Log exception with context."""
+        """Log exception with full traceback."""
+        import sys
         error_msg = f"{message + ': ' if message else ''}{str(e)}"
-        self._log_to_all(logging.ERROR, error_msg)
+        self._log_to_all(logging.ERROR, error_msg, sys.exc_info())
 
     def result_data(self, data: dict[str, Any]) -> None:
         """Log structured result data."""
