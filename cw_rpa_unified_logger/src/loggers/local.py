@@ -9,6 +9,7 @@ from datetime import datetime, UTC
 from pathlib import Path
 from typing import Any
 
+from cw_rpa_unified_logger.src.loggers.handlers import LogHandlerFactory
 from cw_rpa_unified_logger.src.loggers.base import BaseLogger
 from cw_rpa_unified_logger.src.loggers.config import LoggerConfig
 from cw_rpa_unified_logger.src.loggers.types import LoggerType
@@ -30,52 +31,17 @@ class LocalLogger(BaseLogger):
         self.logger = logging.getLogger(config.logger_name or __name__)
         self.logger.setLevel(config.log_level)
         self.logger.handlers = []  # Clear existing handlers
+        self.setup_handlers()
         
-        # Set up handlers
-        self._setup_console_handler()
-        if LoggerType.LOCAL in self.config.enabled_loggers:
-            self._setup_file_handler()
-            
-    def _setup_console_handler(self) -> None:
-        """Configure console handler with color support."""
-        handler = colorlog.StreamHandler()
-        handler.setLevel(self.config.log_level)
-        
-        formatter = colorlog.ColoredFormatter(
-            '%(asctime)s - [%(process)d] - %(log_color)s%(levelname)s%(reset)s - '
-            '%(log_color)s%(message)s%(reset)s',
-            log_colors={
-                'DEBUG': 'cyan',
-                'INFO': 'green',
-                'WARNING': 'yellow',
-                'ERROR': 'red',
-                'CRITICAL': 'red,bg_white',
-            },
-            reset=True,
-            style='%'
+    def setup_handlers(self) -> None:
+        handler_factory = LogHandlerFactory()
+        handlers = handler_factory.create_handlers(
+            level=self.config.log_level,
+            log_file=self.config.log_dir / self.config.log_file_name,
+            enable_console=self.config.enable_terminal_output
         )
-        handler.setFormatter(formatter)
-        self.logger.addHandler(handler)
-        
-    def _setup_file_handler(self) -> None:
-        """Configure file handler with rotation support."""
-        log_dir = Path(__file__).parent.parent / "logs"
-        log_dir.mkdir(exist_ok=True)
-        
-        file_path = log_dir / self.config.log_file_name
-        handler = logging.FileHandler(file_path, mode='w')
-        handler.setLevel(self.config.log_level)
-        
-        formatter = logging.Formatter(
-            '%(asctime)s - [%(process)d] - %(levelname)s - %(message)s'
-        )
-        handler.setFormatter(formatter)
-        self.logger.addHandler(handler)
-        
-        # Write initial log entry
-        with open(file_path, 'w') as f:
-            f.write(f"Log started at {datetime.now(UTC)} "
-                   f"with config: {self.config}\n")
+        for handler in handlers:
+            self.logger.addHandler(handler)
 
     def log(self, level: int, message: str) -> None:
         """Log a message at the specified level."""

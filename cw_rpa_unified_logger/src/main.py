@@ -1,56 +1,49 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 # ./cw_rpa_unified_logger/src/main.py
-from cw_rpa_unified_logger.src import get_logger
+
+from cw_rpa_unified_logger.src.loggers.async_logger import get_logger, AsyncLogger
 import asyncio
 import logging
-    
-DISCORD_WEBHOOK = None  # Replace with your Discord webhook URL
-    
-async def cleanup_loggers(logger):
-    discord_logger = logger.loggers.get("discord")
-    if discord_logger:
-        await discord_logger.cleanup()
-    
+
+# Replace with your Discord webhook URL or set to None if not using Discord logging
+DISCORD_WEBHOOK = None  # e.g., "https://discord.com/api/webhooks/..."
+
+async def cleanup_loggers(manager: AsyncLogger):
+    """Cleanup loggers using the manager."""
+    if manager:
+        await manager.cleanup()
+
 def log_examples(logger: logging.Logger):
     """
     Demonstrates logging at various levels.
     """
     logger.debug("Debug level information")
+    logger.info("Info level information")
     logger.warning("Warning level alert")
     logger.error("Error level notification")
-    
+    logger.critical("Critical level issue")
+
 async def main():
-    """
-    Initialize and demonstrate unified logger functionality.
-    
-    Demonstrates logging at various levels and ensures proper cleanup.
-    
-    Available logger types:
-    - "local": File-based logging
-    - "discord": Discord webhook notifications 
-    - "asio": ASIO system integration
-    """
+    """Initialize and demonstrate unified logger functionality."""
+    logger_types = {"local", "discord", "asio"} if DISCORD_WEBHOOK else {"local", "asio"}
+
     logger, manager = await get_logger(
         webhook_url=DISCORD_WEBHOOK,
-        logger_types={"local", "discord", "asio"}  # defaults to all three but you can remove as needed
+        log_level=logging.INFO,  # Set to DEBUG to capture debug logs
+        logger_types=logger_types,
+        enable_terminal=True,
+        terminal_level=logging.WARNING
     )
     
     if logger:
         try:
-            # Example logging usage
             logger.info("Logger initialized successfully")
-            
+            logger.debug(f"Logger configuration: {manager.config.as_dict()}")
             log_examples(logger)
-            
-            
-            # Your application code here
-            
         finally:
-            # Ensure proper cleanup of logger resources
-            await manager.cleanup()
+            await cleanup_loggers(manager)
     else:
         logging.error("Failed to initialize logger")
 
 if __name__ == "__main__":
-   asyncio.run(main())
+    asyncio.run(main())

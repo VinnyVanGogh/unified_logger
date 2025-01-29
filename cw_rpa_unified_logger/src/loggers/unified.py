@@ -76,16 +76,11 @@ class UnifiedLogger:
     def _log_to_all(self, level: int, message: str, exc_info: bool | tuple | None = None) -> None:
         """
         Distribute log message to all active backends with exception handling.
-        
-        Args:
-            level (int): Logging level
-            message (str): Message to log
-            exc_info: Exception information (bool, tuple, or None)
         """
         processed = self.formatter.process_message(message)
         if processed is None:
             return
-            
+
         # Handle exception info
         if exc_info:
             if exc_info is True:
@@ -94,11 +89,12 @@ class UnifiedLogger:
             if isinstance(exc_info, tuple) and len(exc_info) == 3:
                 processed = f"{processed}\n{self._format_exception(exc_info)}"
 
-        for logger in self.loggers.values():
+        for name, logger in self.loggers.items():
             try:
                 logger.log(level, processed)
             except Exception as e:
-                print(f"Logging failed for {logger.__class__.__name__}: {e}")
+                print(f"Logging failed for {name}: {e}")
+
 
 
     @contextmanager

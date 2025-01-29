@@ -27,7 +27,7 @@ class LoggerType(Enum):
         """Convert input to LoggerType set with validation."""
         if types is None:
             return cls.all_types()
-            
+        
         if isinstance(types, str):
             # Split and convert string input
             return {
@@ -35,12 +35,13 @@ class LoggerType(Enum):
                 for t in types.split(',') 
                 if t.strip().upper() in cls._member_names_
             }
-            
-        # Already converted to LoggerType
-        if all(isinstance(t, cls) for t in types):
-            return set(types)
-            
-        return set()  # Empty set for invalid input
+        
+        # Assume it's an iterable of strings
+        return {
+            cls[t.strip().upper()]
+            for t in types
+            if isinstance(t, str) and t.strip().upper() in cls._member_names_
+        }
     
     @classmethod 
     def split_multiple(cls, types: str) -> Set['LoggerType']:

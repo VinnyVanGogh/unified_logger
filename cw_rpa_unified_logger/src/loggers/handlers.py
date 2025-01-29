@@ -21,18 +21,10 @@ class LogHandlerFactory:
     ) -> logging.Handler:
         """
         Create a console handler with color support.
-        
-        Args:
-            level (int): Logging level
-            format_string (str, optional): Custom format string
-            log_colors (dict, optional): Custom color mapping
-            
-        Returns:
-            logging.Handler: Configured console handler
         """
         handler = colorlog.StreamHandler()
-        handler.setLevel(level)
-        
+        handler.setLevel(level)  # <- Ensure handler respects the configured level
+
         if format_string is None:
             format_string = (
                 '%(asctime)s - [%(process)d] - %(log_color)s%(levelname)s%(reset)s - '
@@ -56,6 +48,7 @@ class LogHandlerFactory:
         )
         handler.setFormatter(formatter)
         return handler
+
         
     @staticmethod
     def create_file_handler(
@@ -66,22 +59,8 @@ class LogHandlerFactory:
         encoding: str = 'utf-8'
     ) -> logging.Handler:
         """
-        Create a file handler with rotation support.
-        
-        Args:
-            level (int): Logging level
-            log_file (Path): Path to log file
-            format_string (str, optional): Custom format string
-            mode (str): File open mode ('a' for append, 'w' for write)
-            encoding (str): File encoding
-            
-        Returns:
-            logging.Handler: Configured file handler
-            
-        Raises:
-            OSError: If log directory creation fails
+        Create a file handler for writing log messages to a file.
         """
-        # Ensure log directory exists
         log_file.parent.mkdir(parents=True, exist_ok=True)
         
         handler = logging.FileHandler(
@@ -109,25 +88,18 @@ class LogHandlerFactory:
         cls,
         level: int,
         log_file: Path | None = None,
-        enable_console: bool = True
+        enable_console: bool = True,
+        terminal_level: int = logging.WARNING  # Add terminal level parameter
     ) -> list[logging.Handler]:
         """
         Create multiple handlers at once.
-        
-        Args:
-            level (int): Logging level
-            log_file (Path, optional): Path to log file
-            enable_console (bool): Whether to create console handler
-            
-        Returns:
-            list[logging.Handler]: List of configured handlers
         """
         handlers = []
         
         if enable_console:
-            handlers.append(cls.create_console_handler(level))
-            
+            handlers.append(cls.create_console_handler(terminal_level))  # Use terminal_level for console
+        
         if log_file is not None:
             handlers.append(cls.create_file_handler(level, log_file))
-            
+        
         return handlers

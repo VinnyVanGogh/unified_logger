@@ -1,3 +1,5 @@
-2025-01-27 23:33:49,980 - INFO - Logger initialized successfully
-2025-01-27 23:33:49,980 - WARNING - Warning level alert
-2025-01-27 23:33:49,980 - ERROR - Error level notification
+2025-01-28 16:04:18,631 - INFO - Logger initialized successfully
+2025-01-28 16:04:18,631 - INFO - Info level information
+2025-01-28 16:04:18,631 - WARNING - Warning level alert
+2025-01-28 16:04:18,631 - ERROR - Error level notification
+2025-01-28 16:04:18,631 - CRITICAL - Critical level issue
