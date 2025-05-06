@@ -2,7 +2,6 @@
 # ./cw_rpa_unified_logger/src/loggers/async_logger.py
 from .config import LoggerConfig
 from .unified import UnifiedLogger
-from .types import LoggerType
 from .handlers import LogHandlerFactory
 from typing import Optional, Set, Tuple, Union, List
 import logging
