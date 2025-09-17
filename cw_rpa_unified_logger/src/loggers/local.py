@@ -4,15 +4,11 @@
 
 import logging
 import json
-import colorlog
-from datetime import datetime, UTC
-from pathlib import Path
 from typing import Any
 
 from cw_rpa_unified_logger.src.loggers.handlers import LogHandlerFactory
 from cw_rpa_unified_logger.src.loggers.base import BaseLogger
 from cw_rpa_unified_logger.src.loggers.config import LoggerConfig
-from cw_rpa_unified_logger.src.loggers.types import LoggerType
 
 class LocalLogger(BaseLogger):
     """
