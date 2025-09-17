@@ -4,7 +4,6 @@
 
 from enum import Enum
 from typing import Union, Set, List
-import logging
 
 class LoggerType(Enum):
     """Supported logger types for the unified logging system."""
